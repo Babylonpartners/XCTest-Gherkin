@@ -255,4 +255,14 @@ final class ExampleFeatures: XCTestCase {
         }
     }
 
+    func testNativeDataTable() {
+        Given("I have the following persons:") {
+            """
+            | name  | age   | height |  fulltime  |
+            | Alice | "20"  | 170    |    true    |
+            | Bob   | "21"  | 171    |    false   |
+            """
+        }
+    }
+
 }

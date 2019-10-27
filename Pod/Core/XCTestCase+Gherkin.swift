@@ -190,6 +190,13 @@ public extension XCTestCase {
     }
 
     /**
+     Run the step matching the specified expression followed by a data table as a raw string
+     */
+    func Given(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> String) {
+        self.performStep(expression + " \(values().components(separatedBy: "\n").joined(separator: ","))", keyword: "Given", file: file, line: line)
+    }
+
+    /**
      Run the step matching the specified expression
      */
     func When(_ expression: String, file: String = #file, line: Int = #line) {
@@ -201,6 +208,13 @@ public extension XCTestCase {
      */
     func When<T: Collection & Codable>(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> T) {
         self.performStep(expression + " \(DataTable(values()))", keyword: "When", file: file, line: line)
+    }
+
+    /**
+     Run the step matching the specified expression followed by a data table as a raw string
+     */
+    func When(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> String) {
+        self.performStep(expression + " \(values().components(separatedBy: "\n").joined(separator: ","))", keyword: "When", file: file, line: line)
     }
 
     /**
@@ -218,6 +232,13 @@ public extension XCTestCase {
     }
 
     /**
+     Run the step matching the specified expression followed by a data table as a raw string
+     */
+    func Then(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> String) {
+        self.performStep(expression + " \(values().components(separatedBy: "\n").joined(separator: ","))", keyword: "Then", file: file, line: line)
+    }
+
+    /**
      Run the step matching the specified expression
      */
     func And(_ expression: String, file: String = #file, line: Int = #line) {
@@ -229,6 +250,13 @@ public extension XCTestCase {
      */
     func And<T: Collection & Codable>(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> T) {
         self.performStep(expression + " \(DataTable(values()))", keyword: "And", file: file, line: line)
+    }
+
+    /**
+     Run the step matching the specified expression followed by a data table as a raw string
+     */
+    func And(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> String) {
+        self.performStep(expression + " \(values().components(separatedBy: "\n").joined(separator: ","))", keyword: "And", file: file, line: line)
     }
 
 }
