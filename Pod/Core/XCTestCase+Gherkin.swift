@@ -185,21 +185,42 @@ public extension XCTestCase {
     func Given(_ expression: String, file: String = #file, line: Int = #line) {
         self.performStep(expression, keyword: "Given", file: file, line: line)
     }
-    
+
+    /**
+     Run the step matching the specified expression followed by a data table
+     */
+    func Given<T: Collection & Codable>(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> T) {
+        self.performStep(expression + " \(DataTable(values()))", keyword: "Given", file: file, line: line)
+    }
+
     /**
      Run the step matching the specified expression
      */
     func When(_ expression: String, file: String = #file, line: Int = #line) {
         self.performStep(expression, keyword: "When", file: file, line: line)
     }
-    
+
+    /**
+     Run the step matching the specified expression followed by a data table
+     */
+    func When<T: Collection & Codable>(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> T) {
+        self.performStep(expression + " \(DataTable(values()))", keyword: "When", file: file, line: line)
+    }
+
     /**
      Run the step matching the specified expression
      */
     func Then(_ expression: String, file: String = #file, line: Int = #line) {
         self.performStep(expression, keyword: "Then", file: file, line: line)
     }
-    
+
+    /**
+     Run the step matching the specified expression followed by a data table
+     */
+    func Then<T: Collection & Codable>(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> T) {
+        self.performStep(expression + " \(DataTable(values()))", keyword: "Then", file: file, line: line)
+    }
+
     /**
      Run the step matching the specified expression
      */
@@ -213,45 +234,48 @@ public extension XCTestCase {
     func But(_ expression: String, file: String = #file, line: Int = #line) {
         self.performStep(expression, keyword: "But", file: file, line: line)
     }
-}
 
-private var automaticScreenshotsBehaviour: AutomaticScreenshotsBehaviour = .none
-private var automaticScreenshotsQuality: XCTAttachment.ImageQuality = .medium
-private var automaticScreenshotsLifetime: XCTAttachment.Lifetime = .deleteOnSuccess
-
-public struct AutomaticScreenshotsBehaviour: OptionSet {
-    public let rawValue: Int
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
+    /**
+     Run the step matching the specified expression followed by a data table
+     */
+    func And<T: Collection & Codable>(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> T) {
+        self.performStep(expression + " \(DataTable(values()))", keyword: "And", file: file, line: line)
     }
 
-    public static let onFailure     = AutomaticScreenshotsBehaviour(rawValue: 1 << 0)
-    public static let beforeStep    = AutomaticScreenshotsBehaviour(rawValue: 1 << 1)
-    public static let afterStep     = AutomaticScreenshotsBehaviour(rawValue: 1 << 2)
-    public static let none: AutomaticScreenshotsBehaviour = []
-    public static let all: AutomaticScreenshotsBehaviour = [.onFailure, .beforeStep, .afterStep]
 }
 
-@available(iOS 9.0, OSX 10.11, *)
-extension XCTestCase {
-
-    /// Set behaviour for automatic screenshots (default is `.none`), their quality (default is `.medium`) and lifetime (default is `.deleteOnSuccess`)
-    public static func setAutomaticScreenshotsBehaviour(_ behaviour: AutomaticScreenshotsBehaviour,
-                                                        quality: XCTAttachment.ImageQuality = .medium,
-                                                        lifetime: XCTAttachment.Lifetime = .deleteOnSuccess) {
-        automaticScreenshotsBehaviour = behaviour
-        automaticScreenshotsQuality = quality
-        automaticScreenshotsLifetime = lifetime
+// Support for raw string data tables
+public extension XCTestCase {
+    /**
+     Run the step matching the specified expression followed by a data table as a raw string
+     */
+    func Given(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> String) {
+        self.performStep(expression + " \(formatNativeDataTable(values()))", keyword: "Given", file: file, line: line)
     }
 
-    func attachScreenshot() {
-        // if tests have no host app there is no point in making screenshots
-        guard Bundle.main.bundlePath.hasSuffix(".app") else { return }
+    /**
+     Run the step matching the specified expression followed by a data table as a raw string
+     */
+    func When(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> String) {
+        self.performStep(expression + " \(formatNativeDataTable(values()))", keyword: "When", file: file, line: line)
+    }
 
-        let screenshot = XCUIScreen.main.screenshot()
-        let attachment = XCTAttachment(screenshot: screenshot, quality: automaticScreenshotsQuality)
-        attachment.lifetime = automaticScreenshotsLifetime
-        add(attachment)
+    /**
+     Run the step matching the specified expression followed by a data table as a raw string
+     */
+    func Then(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> String) {
+        self.performStep(expression + " \(formatNativeDataTable(values()))", keyword: "Then", file: file, line: line)
+    }
+
+    /**
+     Run the step matching the specified expression followed by a data table as a raw string
+     */
+    func And(_ expression: String, file: String = #file, line: Int = #line, dataTable values: () -> String) {
+        self.performStep(expression + " \(formatNativeDataTable(values()))", keyword: "And", file: file, line: line)
+    }
+
+    private func formatNativeDataTable(_ rawDataTable: String) -> String {
+        return rawDataTable.components(separatedBy: "\n").joined(separator: ",")
     }
 }
 

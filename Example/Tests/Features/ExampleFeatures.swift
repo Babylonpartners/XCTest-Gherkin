@@ -135,10 +135,10 @@ final class ExampleFeatures: XCTestCase {
         }
     }
 
-    struct Person: CodableMatchedStringRepresentable {
+    struct Person: CodableMatchedStringRepresentable, Equatable {
         let name: String
         let age: Int
-        let height: Int
+        let height: Float
     }
 
     func testCustomExampleValues() {
@@ -238,4 +238,45 @@ final class ExampleFeatures: XCTestCase {
         // This should just not crash.
         Given("I have two users \(Person(name: "Alice", age: 27, height: 170)) and \(Person(name: "Bob", age: 20, height: 180))")
     }
+
+    func testArrayDataTable() {
+        Given("I add the following numbers:") {
+            [1, 2, 3]
+        }
+        Then("I end up with 6")
+    }
+
+    func testDictionaryDataTable() {
+        Given("I add the following letters:") {
+            ["a": 1, "b": 2, "c": 3]
+        }
+        Then("I end up with 6")
+    }
+
+    func testCodableDataTable() {
+        Given("I know the following persons:") {
+            [
+                Person(name: "Alice", age: 27, height: 170),
+                Person(name: "Bob", age: 27, height: 170)
+            ]
+        }
+
+        Given("I know the following persons by name:") {
+            [
+                "Alice": Person(name: "Alice", age: 27, height: 170),
+                "Bob": Person(name: "Bob", age: 27, height: 170)
+            ]
+        }
+    }
+
+    func testNativeDataTable() {
+        Given("I have the following persons:") {
+            """
+            | name  | age   | height |  fulltime  |
+            | Alice | "20"  | 170    |    true    |
+            | Bob   | "21"  | 171    |    false   |
+            """
+        }
+    }
+
 }
